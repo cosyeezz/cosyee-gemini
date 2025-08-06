@@ -1,0 +1,21 @@
+{
+  "port": 8000,
+  "backends": [
+    {
+      "url": "https://generativelanguage.googleapis.com",
+      "api_key": "your-gemini-api-key-1"
+    },
+    {
+      "url": "https://generativelanguage.googleapis.com", 
+      "api_key": "your-gemini-api-key-2"
+    }
+  ],
+  "health_check": {
+    "enabled": true,
+    "interval_seconds": 30,
+    "timeout_seconds": 5,
+    "path": "/v1beta/models"
+  },
+  "max_failures": 3,
+  "log_level": "info"
+}
