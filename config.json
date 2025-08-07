@@ -3,11 +3,15 @@
   "backends": [
     {
       "url": "https://generativelanguage.googleapis.com",
-      "api_key": "your-gemini-api-key-1"
+      "api_key": "AIzaSyDZOr7WaY45IWrjZ7LEI0J8DuXvwXXCCGA"
     },
     {
       "url": "https://generativelanguage.googleapis.com", 
-      "api_key": "your-gemini-api-key-2"
+      "api_key": "AIzaSyA_a2GqkWm12ctG5780w3S8D2vR58xsnrA"
+    },
+    {
+      "url": "https://generativelanguage.googleapis.com", 
+      "api_key": "AIzaSyAngfVNv1OrMRg_AGYUkgaH_0NisFd_JXE"
     }
   ],
   "health_check": {
