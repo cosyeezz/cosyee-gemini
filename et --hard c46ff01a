@@ -1,0 +1,10 @@
+[33m594a6758[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m Update package names from @google to @cosyeezz
+[33m4cf5e59b[m Fix npm install from Git by adding safe bundle script
+[33mc85e73ec[m Update USAGE_EXAMPLE.md with multiple Git protocol support and unified command examples
+[33m5fa7e7b5[m Implement unified logging system and fix npm installation issues
+[33m8b6b38f5[m Fix installation issues: replace prepare with postinstall script and add API key rotation with file logging
+[33mc46ff01a[m 日志与更新
+[33m2865a527[m docs(config): Add showLineNumbers option to documentation (#5947)
+[33m0e44bbc8[m docs(readme): Overhaul for clarity and user experience (#5732)
+[33m0157eae3[m fix(settings): enable default usage statistics collection (#5909)
+[33m8a9a9275[m feat(ui): add /settings command and UI panel (#4738)
