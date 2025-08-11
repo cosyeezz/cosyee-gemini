@@ -13,9 +13,9 @@ import {
   GenerateContentResponse,
   GoogleGenAI,
 } from '@google/genai';
-import * as fs from 'fs';
 import { ContentGenerator, ContentGeneratorConfig } from './contentGenerator.js';
 import { Config } from '../config/config.js';
+import { getApiKeyRotationLogPath, safeLogWrite } from '../utils/logPath.js';
 
 /**
  * API Key 轮询管理器
@@ -101,7 +101,7 @@ export class ApiKeyRotatingContentGenerator implements ContentGenerator {
         
         // 成功后轮询到下一个Key（负载均衡）
         this.keyManager.rotateToNext();
-        fs.appendFileSync('rotation.log', `[SUCCESS] Request succeeded. Next request will use key ending with "...${this.keyManager.getCurrentKey().slice(-4)}"\n`);
+        safeLogWrite(`[SUCCESS] Request succeeded. Next request will use key ending with "...${this.keyManager.getCurrentKey().slice(-4)}"`);
         
         return result;
       } catch (error) {
@@ -111,7 +111,7 @@ export class ApiKeyRotatingContentGenerator implements ContentGenerator {
         if (this.isAuthenticationError(error) && attempt < maxAttempts - 1) {
           const oldKey = this.keyManager.getCurrentKey();
           this.keyManager.rotateToNext();
-          fs.appendFileSync('rotation.log', `[FAILURE] API Key ending with "...${oldKey.slice(-4)}" failed. Attempting key ending with "...${this.keyManager.getCurrentKey().slice(-4)}"\n`);
+          safeLogWrite(`[FAILURE] API Key ending with "...${oldKey.slice(-4)}" failed. Attempting key ending with "...${this.keyManager.getCurrentKey().slice(-4)}"`);
           continue;
         }
         
