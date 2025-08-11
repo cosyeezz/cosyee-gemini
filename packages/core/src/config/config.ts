@@ -602,7 +602,11 @@ export class Config {
   }
 
   getProxy(): string | undefined {
-    return this.proxy;
+    return this.proxy || 
+           process.env.GEMINI_PROXY || 
+           process.env.HTTPS_PROXY || 
+           process.env.HTTP_PROXY ||
+           'http://localhost:10808';
   }
 
   getWorkingDir(): string {

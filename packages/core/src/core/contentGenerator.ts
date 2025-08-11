@@ -19,6 +19,7 @@ import { Config } from '../config/config.js';
 import { getEffectiveModel } from './modelCheck.js';
 import { UserTierId } from '../code_assist/types.js';
 import { LoggingContentGenerator } from './loggingContentGenerator.js';
+import { ApiKeyRotatingContentGenerator } from './apiKeyRotatingContentGenerator.js';
 
 /**
  * Interface abstracting the core functionalities for generating content and counting tokens.
@@ -137,12 +138,23 @@ export async function createContentGenerator(
     config.authType === AuthType.USE_GEMINI ||
     config.authType === AuthType.USE_VERTEX_AI
   ) {
-    const googleGenAI = new GoogleGenAI({
-      apiKey: config.apiKey === '' ? undefined : config.apiKey,
-      vertexai: config.vertexai,
-      httpOptions,
-    });
-    return new LoggingContentGenerator(googleGenAI.models, gcConfig);
+    const apiKeyString = process.env.GEMINI_API_KEY || config.apiKey || '';
+    
+    let generator: ContentGenerator;
+    if (apiKeyString.includes(',')) {
+      // 多Key: 使用轮询装饰器
+      generator = new ApiKeyRotatingContentGenerator(config, gcConfig);
+    } else {
+      // 单Key: 使用原逻辑
+      const googleGenAI = new GoogleGenAI({
+        apiKey: config.apiKey === '' ? undefined : config.apiKey,
+        vertexai: config.vertexai,
+        httpOptions,
+      });
+      generator = googleGenAI.models;
+    }
+    
+    return new LoggingContentGenerator(generator, gcConfig);
   }
   throw new Error(
     `Error creating contentGenerator: Unsupported authType: ${config.authType}`,
