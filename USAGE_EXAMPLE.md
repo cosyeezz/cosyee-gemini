@@ -16,6 +16,47 @@
 - 一个或多个有效的 Gemini API Key
 - (可选) 运行在 10808 端口的代理服务器
 
+## 安装方式
+
+### 方式一：全局安装 (推荐)
+
+如果您想在任何目录下直接使用 `gemini` 命令，可以进行全局安装：
+
+#### Git 直接安装 (可能较慢)
+```powershell
+npm install -g git+https://github.com/cosyeezz/cosyee-gemini.git
+```
+
+#### Git 克隆 + 本地安装 (推荐，更稳定)
+如果上述方法卡住或失败，请使用这个替代方案：
+
+```powershell
+# 1. 克隆仓库
+git clone https://github.com/cosyeezz/cosyee-gemini.git
+cd cosyee-gemini
+
+# 2. 全局安装
+npm install -g .
+
+# 3. 清理临时文件 (可选)
+cd ..
+Remove-Item -Recurse -Force cosyee-gemini
+```
+
+#### 验证安装
+```powershell
+gemini --version
+# 应该输出: 0.1.18
+```
+
+安装成功后，您可以直接跳到 [第二步：环境变量配置](#第二步环境变量配置)。
+
+---
+
+### 方式二：本地开发模式
+
+如果您想修改代码或进行开发，请使用本地构建方式：
+
 ## 第一步：构建项目
 
 1. 打开您的终端 (PowerShell)
@@ -67,6 +108,30 @@ $env:GEMINI_API_KEY="your_single_api_key_here"
 $env:GEMINI_API_KEY="key1,key2,key3"
 ```
 
+## 命令使用说明
+
+根据您的安装方式，请使用对应的命令：
+
+### 全局安装用户 (推荐)
+```powershell
+# 基本命令
+gemini -p "您的问题"
+
+# 交互模式
+gemini
+```
+
+### 本地开发用户
+```powershell
+# 基本命令
+npm start -- -p "您的问题"
+
+# 交互模式
+npm start
+```
+
+> **注意**：以下所有测试示例都会同时提供两种命令格式。
+
 ## 第三步：测试场景
 
 ### 场景 1：负载均衡测试
@@ -81,6 +146,10 @@ $env:GEMINI_API_KEY="key1,key2,key3"
 
 2. **第一次测试**:
    ```powershell
+   # 全局安装用户
+   gemini -p "你好，请回答一个简单的问题"
+   
+   # 本地开发用户
    npm start -- -p "你好，请回答一个简单的问题"
    ```
 
@@ -92,6 +161,10 @@ $env:GEMINI_API_KEY="key1,key2,key3"
 
 3. **第二次测试**:
    ```powershell
+   # 全局安装用户
+   gemini -p "今天是星期几？"
+   
+   # 本地开发用户
    npm start -- -p "今天是星期几？"
    ```
 
@@ -189,6 +262,10 @@ $env:GEMINI_API_KEY="key1,key2,key3"
 
 1. **启动交互模式**:
    ```powershell
+   # 全局安装用户
+   gemini
+   
+   # 本地开发用户
    npm start
    ```
 
@@ -231,7 +308,27 @@ $env:GEMINI_API_KEY="key1,key2,key3"
 
 ## 故障排除
 
-### 常见问题
+### 安装问题
+
+1. **`npm install -g git+...` 卡住或失败**:
+   ```powershell
+   # 解决方案：使用 Git 克隆 + 本地安装
+   git clone https://github.com/cosyeezz/cosyee-gemini.git
+   npm install -g ./cosyee-gemini
+   Remove-Item -Recurse -Force cosyee-gemini
+   ```
+
+2. **`gemini` 命令不存在**:
+   - 检查全局安装是否成功：`npm ls -g --depth=0`
+   - 确保 npm 全局 bin 目录在 PATH 中：`npm config get prefix`
+   - 重新安装：`npm uninstall -g @google/gemini-cli && npm install -g ./cosyee-gemini`
+
+3. **GitHub 推送保护错误** (开发者相关):
+   - 如果您在开发时遇到 "Secret scanning found a Google OAuth Client ID" 错误
+   - 这些是公开的 OAuth 客户端 ID，可以安全地允许
+   - 访问 GitHub 提供的链接并选择 "It's used in tests"
+
+### 运行问题
 
 1. **构建失败**:
    - 确保 Node.js 版本为 20.19.0
