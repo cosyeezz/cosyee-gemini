@@ -29,7 +29,8 @@ dist
 # Docker folder to help skip auth refreshes
 .docker
 
-# bundle
+# bundle (exclude during development)
+bundle/
 
 # Test report files
 junit.xml
