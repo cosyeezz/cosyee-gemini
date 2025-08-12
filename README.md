@@ -1,282 +1,217 @@
-# Gemini CLI
+# Gemini CLI 增强版
 
-[![Gemini CLI CI](https://github.com/google-gemini/gemini-cli/actions/workflows/ci.yml/badge.svg)](https://github.com/google-gemini/gemini-cli/actions/workflows/ci.yml)
-[![Version](https://img.shields.io/npm/v/@google/gemini-cli)](https://www.npmjs.com/package/@google/gemini-cli)
-[![License](https://img.shields.io/github/license/google-gemini/gemini-cli)](https://github.com/google-gemini/gemini-cli/blob/main/LICENSE)
+基于 [Google 官方 Gemini CLI](https://github.com/google-gemini/gemini-cli) 的增强版本，添加了 API Key 轮询、故障转移和代理支持等企业级功能。
 
-![Gemini CLI Screenshot](./docs/assets/gemini-screenshot.png)
+## 🆚 主要改动
 
-Gemini CLI is an open-source AI agent that brings the power of Gemini directly into your terminal. It provides lightweight access to Gemini, giving you the most direct path from your prompt to our model.
-
-## 🚀 Why Gemini CLI?
-
-- **🎯 Free tier**: 60 requests/min and 1,000 requests/day with personal Google account
-- **🧠 Powerful Gemini 2.5 Pro**: Access to 1M token context window
-- **🔧 Built-in tools**: Google Search grounding, file operations, shell commands, web fetching
-- **🔌 Extensible**: MCP (Model Context Protocol) support for custom integrations
-- **💻 Terminal-first**: Designed for developers who live in the command line
-- **🛡️ Open source**: Apache 2.0 licensed
-
-## 📦 Installation
-
-### Quick Install
-
-#### Run instantly with npx
+### 🔄 **API Key 轮询与故障转移**
+- **多 Key 支持**：支持配置多个 API Key（逗号分隔），实现负载均衡
+- **自动故障转移**：当某个 API Key 失败时自动切换到下一个可用的 Key
+- **智能轮询**：每次请求成功后自动轮询到下一个 Key，避免单点过载
+- **详细日志**：记录 Key 切换过程，便于监控和调试
 
 ```bash
-# Using npx (no installation required)
-npx https://github.com/google-gemini/gemini-cli
+# 配置多个 API Key
+export GEMINI_API_KEY="key1,key2,key3"
 ```
 
-#### Install globally with npm
+### 🌐 **代理支持**
+- **默认代理**：所有 API 请求默认通过 `http://localhost:10808` 代理
+- **自定义代理**：支持通过环境变量 `GEMINI_PROXY` 自定义代理地址
+- **无缝集成**：代理功能对用户透明，无需额外配置
 
 ```bash
-npm install -g @google/gemini-cli
+# 自定义代理地址
+export GEMINI_PROXY="http://your-proxy-server:port"
 ```
 
-#### Install globally with Homebrew (macOS/Linux)
+### 📊 **跨平台日志系统**
+- **统一路径**：不同操作系统使用标准化的日志路径
+- **详细记录**：API Key 切换、故障转移过程的完整日志
+- **静默处理**：日志功能不影响主程序运行
 
+**日志位置**：
+- **Windows**: `%USERPROFILE%\.gemini-cli\logs\api-key-rotation.log`
+- **macOS**: `~/Library/Logs/gemini-cli/api-key-rotation.log`
+- **Linux**: `~/.local/share/gemini-cli/logs/api-key-rotation.log`
+
+### 🛠️ **开发优化**
+- **源码开发**：开发时直接使用源码，bundle 文件被忽略
+- **自动构建**：安装时自动构建可执行文件
+- **全局命令**：支持 `gemini` 命令全局使用
+
+## 📦 本地安装与使用
+
+### 安装步骤
+
+#### 1. 下载代码
 ```bash
-brew install gemini-cli
+git clone https://github.com/cosyeezz/cosyee-gemini.git
+cd cosyee-gemini
 ```
 
-#### System Requirements
-
-- Node.js version 20 or higher
-- macOS, Linux, or Windows
-
-## 📋 Key Features
-
-With Gemini CLI you can:
-
-- **Code Understanding & Generation**
-  - Query and edit large codebases
-  - Generate new apps from PDFs, images, or sketches using multimodal capabilities
-  - Debug issues and troubleshoot with natural language
-- **Automation & Integration**
-  - Automate operational tasks like querying pull requests or handling complex rebases
-  - Use MCP servers to connect new capabilities, including [media generation with Imagen, Veo or Lyria](https://github.com/GoogleCloudPlatform/vertex-ai-creative-studio/tree/main/experiments/mcp-genmedia)
-  - Run non-interactively in scripts for workflow automation
-- **Advanced Capabilities**
-  - Ground your queries with built-in [Google Search](https://ai.google.dev/gemini-api/docs/grounding) for real-time information
-  - Conversation checkpointing to save and resume complex sessions
-  - Custom context files (GEMINI.md) to tailor behavior for your projects
-
-- **🔗 GitHub Integration**
-  - Use the Gemini CLI GitHub Action for automated PR reviews
-  - Automated issue triage and on-demand AI assistance directly in your repositories
-  - Seamless integration with your GitHub workflows
-
-## 🔐 Authentication Options
-
-Choose the authentication method that best fits your needs:
-
-### Option 1: OAuth login (Using your Google Account)
-
-**✨ Best for:** Individual developers as well as anyone who has a Gemini Code Assist License. (see [quota limits and terms of service](https://cloud.google.com/gemini/docs/quotas) for details)
-
-**Benefits:**
-
-- **Free tier**: 60 requests/min and 1,000 requests/day
-- **Gemini 2.5 Pro** with 1M token context window
-- **No API key management** - just sign in with your Google account
-- **Automatic updates** to latest models
-
-#### Start Gemini CLI, then choose OAuth and follow the browser authentication flow when prompted
-
+#### 2. 安装依赖
 ```bash
+npm install
+```
+> 这一步会自动运行 `prepare` 脚本，构建 bundle 文件
+
+#### 3. 全局安装
+```bash
+npm install -g .
+```
+
+#### 4. 验证安装
+```bash
+# 检查版本
+gemini --version
+
+# 启动对话
 gemini
 ```
 
-#### If you are using a paid Code Assist License from your organization, remember to set the Google Cloud Project
+### 配置说明
 
+#### 🔑 API Key 配置
+
+**单个 API Key**：
 ```bash
-# Set your Google Cloud Project
-export GOOGLE_CLOUD_PROJECT="YOUR_PROJECT_NAME"
+export GEMINI_API_KEY="your-api-key-here"
 gemini
 ```
 
-### Option 2: Gemini API Key
-
-**✨ Best for:** Developers who need specific model control or paid tier access
-
-**Benefits:**
-
-- **Free tier**: 100 requests/day with Gemini 2.5 Pro
-- **Model selection**: Choose specific Gemini models
-- **Usage-based billing**: Upgrade for higher limits when needed
-
+**多个 API Key（轮询模式）**：
 ```bash
-# Get your key from https://aistudio.google.com/apikey
-export GEMINI_API_KEY="YOUR_API_KEY"
+export GEMINI_API_KEY="key1,key2,key3"
 gemini
 ```
 
-### Option 3: Vertex AI
-
-**✨ Best for:** Enterprise teams and production workloads
-
-**Benefits:**
-
-- **Enterprise features**: Advanced security and compliance
-- **Scalable**: Higher rate limits with billing account
-- **Integration**: Works with existing Google Cloud infrastructure
-
+**其他认证方式**：
 ```bash
-# Get your key from Google Cloud Console
-export GOOGLE_API_KEY="YOUR_API_KEY"
+# OAuth 登录
+gemini  # 首次运行会提示浏览器登录
+
+# Vertex AI
+export GOOGLE_API_KEY="your-vertex-api-key"
 export GOOGLE_GENAI_USE_VERTEXAI=true
 gemini
-```
 
-For Google Workspace accounts and other authentication methods, see the [authentication guide](./docs/cli/authentication.md).
-
-## 🚀 Getting Started
-
-### Basic Usage
-
-#### Start in current directory
-
-```bash
+# 设置 Google Cloud 项目
+export GOOGLE_CLOUD_PROJECT="your-project-name"
 gemini
 ```
 
-#### Include multiple directories
+#### 🌐 代理配置
 
 ```bash
-gemini --include-directories ../lib,../docs
+# 使用默认代理 (http://localhost:10808)
+gemini
+
+# 自定义代理
+export GEMINI_PROXY="http://your-proxy:port"
+gemini
+
+# 禁用代理
+unset GEMINI_PROXY
+gemini
 ```
 
-#### Use specific model
+### 基本使用
 
+#### 交互式对话
 ```bash
+# 在当前目录启动
+gemini
+
+# 包含多个目录
+gemini --include-directories ../lib,../docs
+
+# 使用特定模型
 gemini -m gemini-2.5-flash
 ```
 
-#### Non-interactive mode for scripts
-
+#### 非交互式使用
 ```bash
-gemini -p "Explain the architecture of this codebase"
+# 单次问答
+gemini -p "解释这段代码的功能"
+
+# 分析项目
+cd your-project
+gemini -p "分析这个项目的架构"
 ```
 
-### Quick Examples
+### 更新版本
 
-#### Start a new project
+当有新的代码更新时：
 
-````bash
-cd new-project/
-gemini
-> Write me a Discord bot that answers questions using a FAQ.md file I will provide
-
-#### Analyze existing code
 ```bash
-git clone https://github.com/google-gemini/gemini-cli
-cd gemini-cli
-gemini
-> Give me a summary of all of the changes that went in yesterday
-````
-
-## 🔗 GitHub Integration
-
-Integrate Gemini CLI directly into your GitHub workflows with the [**Gemini CLI GitHub Action**](https://github.com/google-github-actions/run-gemini-cli). Key features include:
-
-- **Pull Request Reviews**: Automatically review pull requests when they're opened.
-- **Issue Triage**: Automatically triage and label GitHub issues.
-- **On-demand Collaboration**: Mention `@gemini-cli` in issues and pull requests for assistance and task delegation.
-- **Custom Workflows**: Set up your own scheduled tasks and event-driven automations.
-
-## 📚 Documentation
-
-### Getting Started
-
-- [**Quickstart Guide**](./docs/cli/index.md) - Get up and running quickly
-- [**Authentication Setup**](./docs/cli/authentication.md) - Detailed auth configuration
-- [**Configuration Guide**](./docs/cli/configuration.md) - Settings and customization
-- [**Keyboard Shortcuts**](./docs/keyboard-shortcuts.md) - Productivity tips
-
-### Core Features
-
-- [**Commands Reference**](./docs/cli/commands.md) - All slash commands (`/help`, `/chat`, `/mcp`, etc.)
-- [**Checkpointing**](./docs/checkpointing.md) - Save and resume conversations
-- [**Memory Management**](./docs/tools/memory.md) - Using GEMINI.md context files
-- [**Token Caching**](./docs/cli/token-caching.md) - Optimize token usage
-
-### Tools & Extensions
-
-- [**Built-in Tools Overview**](./docs/tools/index.md)
-  - [File System Operations](./docs/tools/file-system.md)
-  - [Shell Commands](./docs/tools/shell.md)
-  - [Web Fetch & Search](./docs/tools/web-fetch.md)
-  - [Multi-file Operations](./docs/tools/multi-file.md)
-- [**MCP Server Integration**](./docs/tools/mcp-server.md) - Extend with custom tools
-- [**Custom Extensions**](./docs/extension.md) - Build your own commands
-
-### Advanced Topics
-
-- [**Architecture Overview**](./docs/architecture.md) - How Gemini CLI works
-- [**IDE Integration**](./docs/extension.md) - VS Code companion
-- [**Sandboxing & Security**](./docs/sandbox.md) - Safe execution environments
-- [**Enterprise Deployment**](./docs/deployment.md) - Docker, system-wide config
-- [**Telemetry & Monitoring**](./docs/telemetry.md) - Usage tracking
-- [**Tools API Development**](./docs/core/tools-api.md) - Create custom tools
-
-### Configuration & Customization
-
-- [**Settings Reference**](./docs/cli/configuration.md) - All configuration options
-- [**Theme Customization**](./docs/cli/themes.md) - Visual customization
-- [**.gemini Directory**](./docs/gemini-ignore.md) - Project-specific settings
-- [**Environment Variables**](./docs/cli/configuration.md#environment-variables)
-
-### Troubleshooting & Support
-
-- [**Troubleshooting Guide**](./docs/troubleshooting.md) - Common issues and solutions
-- [**FAQ**](./docs/troubleshooting.md#frequently-asked-questions) - Quick answers
-- Use `/bug` command to report issues directly from the CLI
-
-### Using MCP Servers
-
-Configure MCP servers in `~/.gemini/settings.json` to extend Gemini CLI with custom tools:
-
-```text
-> @github List my open pull requests
-> @slack Send a summary of today's commits to #dev channel
-> @database Run a query to find inactive users
+cd cosyee-gemini
+git pull
+npm install -g .
 ```
 
-See the [MCP Server Integration guide](./docs/tools/mcp-server.md) for setup instructions.
+### 卸载
 
-## 🤝 Contributing
+```bash
+npm uninstall -g @google/gemini-cli
+```
 
-We welcome contributions! Gemini CLI is fully open source (Apache 2.0), and we encourage the community to:
+## 💡 功能特点
 
-- Report bugs and suggest features
-- Improve documentation
-- Submit code improvements
-- Share your MCP servers and extensions
+- ✅ **多 API Key 轮询**：自动负载均衡和故障转移
+- ✅ **代理支持**：默认支持本地代理，可自定义
+- ✅ **详细日志**：API Key 切换和错误日志记录
+- ✅ **跨平台**：支持 Windows、macOS、Linux
+- ✅ **向后兼容**：完全兼容原版 Gemini CLI 的所有功能
+- ✅ **企业友好**：适用于需要高可用性的企业环境
 
-See our [Contributing Guide](./CONTRIBUTING.md) for development setup, coding standards, and how to submit pull requests.
+## 🐛 故障排除
 
-Check our [Official Roadmap](https://github.com/orgs/google-gemini/projects/11/) for planned features and priorities.
+### 问题1：`gemini` 命令未找到
+```bash
+# 确保全局安装成功
+npm list -g @google/gemini-cli
 
-## 📖 Resources
+# 检查 npm 全局路径
+npm config get prefix
+```
 
-- **[Official Roadmap](./ROADMAP.md)** - See what's coming next
-- **[NPM Package](https://www.npmjs.com/package/@google/gemini-cli)** - Package registry
-- **[GitHub Issues](https://github.com/google-gemini/gemini-cli/issues)** - Report bugs or request features
-- **[Security Advisories](https://github.com/google-gemini/gemini-cli/security/advisories)** - Security updates
+### 问题2：权限错误
+```bash
+# macOS/Linux 使用 sudo
+sudo npm install -g .
 
-### Uninstall
+# 或配置 npm 全局路径到用户目录
+npm config set prefix ~/.npm-global
+export PATH=~/.npm-global/bin:$PATH
+```
 
-See the [Uninstall Guide](docs/Uninstall.md) for removal instructions.
+### 问题3：API Key 轮询不工作
+- 检查 API Key 格式是否正确（逗号分隔，无空格）
+- 查看日志文件确认切换过程
+- 确保所有 API Key 都有效且有足够配额
 
-## 📄 Legal
+### 问题4：代理连接失败
+```bash
+# 检查代理服务器是否运行
+curl -x http://localhost:10808 https://www.google.com
 
-- **License**: [Apache License 2.0](LICENSE)
-- **Terms of Service**: [Terms & Privacy](./docs/tos-privacy.md)
-- **Security**: [Security Policy](SECURITY.md)
+# 临时禁用代理测试
+unset GEMINI_PROXY
+gemini
+```
+
+## 📄 许可证
+
+本项目基于 [Apache License 2.0](LICENSE) 开源协议。
+
+## 🔗 相关链接
+
+- **官方原版**：[google-gemini/gemini-cli](https://github.com/google-gemini/gemini-cli)
+- **增强版本**：[cosyeezz/cosyee-gemini](https://github.com/cosyeezz/cosyee-gemini)
 
 ---
 
 <p align="center">
-  Built with ❤️ by Google and the open source community
+  基于 Google Gemini CLI 的企业级增强版本
 </p>
