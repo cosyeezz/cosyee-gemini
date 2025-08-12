@@ -29,7 +29,7 @@ dist
 # Docker folder to help skip auth refreshes
 .docker
 
-# bundle (exclude during development)
+# bundle (automatically generated for local installation)
 bundle/
 
 # Test report files
